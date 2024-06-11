@@ -1,5 +1,4 @@
 use num_bigint::{BigUint, RandBigInt};
-use num_traits::Num;
 use rand;
 
 pub struct ZKP {
@@ -53,6 +52,7 @@ impl ZKP {
 #[cfg(test)]
 mod test {
     use super::*;
+    use num_traits::Num;
 
     #[test]
     fn test_toy_example() {
