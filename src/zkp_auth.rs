@@ -24,9 +24,9 @@ pub struct AuthChallengeRequest {
     #[prost(string, tag = "1")]
     pub user: ::prost::alloc::string::String,
     #[prost(bytes = "vec", tag = "2")]
-    pub y1: ::prost::alloc::vec::Vec<u8>,
+    pub r1: ::prost::alloc::vec::Vec<u8>,
     #[prost(bytes = "vec", tag = "3")]
-    pub y2: ::prost::alloc::vec::Vec<u8>,
+    pub r2: ::prost::alloc::vec::Vec<u8>,
 }
 /// Verifier sends the challenge back
 #[allow(clippy::derive_partial_eq_without_eq)]

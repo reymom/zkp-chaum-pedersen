@@ -20,8 +20,8 @@ message RegisterResponse {
 // r2 = beta^k mod p
 message AuthChallengeRequest {
     string user = 1;
-    bytes y1 = 2;
-    bytes y2 = 3;
+    bytes r1 = 2;
+    bytes r2 = 3;
 }
 
 // Verifier sends the challenge back
