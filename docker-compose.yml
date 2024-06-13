@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  zkp-server:
+    build: .
+    image: zkp-image
+    ports:
+      - "50051:50051"
+    command: ["cargo", "run", "--release", "--bin", "server"]
+    env_file:
+      - .env
+    networks:
+      - zkp-network
+
+  zkp-client:
+    build: .
+    image: zkp-image
+    depends_on:
+      - zkp-server
+    command: ["cargo", "run", "--release", "--bin", "client"]
+    env_file:
+      - .env
+    networks:
+      - zkp-network
+    stdin_open: true
+    tty: true
+
+networks:
+  zkp-network:
+    driver: bridge
