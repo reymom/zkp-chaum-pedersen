@@ -2,7 +2,7 @@ pub mod zkp_auth {
     include!("./zkp_auth.rs");
 }
 
-use std::io::stdin;
+use std::{env, io::stdin};
 
 use num_bigint::BigUint;
 use zkp_auth::{auth_client::AuthClient, AuthAnswerRequest, AuthChallengeRequest, RegisterRequest};
@@ -10,7 +10,8 @@ use zkp_chaum_pedersen::ZKP;
 
 #[tokio::main]
 async fn main() {
-    let mut client = AuthClient::connect("http://127.0.0.1:50051")
+    let addr = env::var("CLIENT_ADDRESS").unwrap_or("http://127.0.0.1:50051".to_string());
+    let mut client = AuthClient::connect(addr)
         .await
         .expect("could not connect to the client");
     println!("Connected to the server");
