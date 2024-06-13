@@ -1,14 +1,38 @@
 use num_bigint::{BigUint, RandBigInt};
-use rand;
+use num_traits::Num;
+use rand::{self, Rng};
 
 pub struct ZKP {
-    p: BigUint,
-    q: BigUint,
-    alpha: BigUint,
-    beta: BigUint,
+    pub p: BigUint,
+    pub q: BigUint,
+    pub alpha: BigUint,
+    pub beta: BigUint,
+}
+
+impl Default for ZKP {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl ZKP {
+    pub fn new() -> Self {
+        let p_hex = "B10B8F96A080E01DDE92DE5EAE5D54EC52C99FBCFB06A3C69A6A9DCA52D23B616073E28675A23D189838EF1E2EE652C013ECB4AEA906112324975C3CD49B83BFACCBDD7D90C4BD7098488E9C219A73724EFFD6FAE5644738FAA31A4FF55BCCC0A151AF5F0DC8B4BD45BF37DF365C1A65E68CFDA76D4DA708DF1FB2BC2E4A4371";
+        let q_hex = "F518AA8781A8DF278ABA4E7D64B7CB9D49462353";
+        let alpha_hex = "A4D1CBD5C3FD34126765A442EFB99905F8104DD258AC507FD6406CFF14266D31266FEA1E5C41564B777E690F5504F213160217B4B01B886A5E91547F9E2749F4D7FBD7D3B9A92EE1909D0D2263F80A76A6A24C087A091F531DBF0A0169B6A28AD662A4D18E73AFA32D779D5918D08BC8858F4DCEF97C2A24855E6EEB22B3B2E5";
+
+        let p = BigUint::from_str_radix(p_hex, 16).expect("Invalid hex for alpha");
+        let q = BigUint::from_str_radix(q_hex, 16).expect("Invalid hex for q");
+        let alpha = BigUint::from_str_radix(alpha_hex, 16).expect("Invalid hex for beta");
+
+        // alpha^i is also a generator
+        let exp = BigUint::from_str_radix("266D31266FEA1E5C41564B777E69", 16)
+            .expect("could not create exp");
+        let beta = ZKP::exponentiate(&alpha, &exp, &p);
+
+        ZKP { alpha, beta, p, q }
+    }
+
     /// output = n^exp mod p
     pub fn exponentiate(n: &BigUint, exponent: &BigUint, modulus: &BigUint) -> BigUint {
         n.modpow(exponent, modulus)
@@ -43,16 +67,21 @@ impl ZKP {
     }
 
     pub fn generate_random_below(bound: &BigUint) -> BigUint {
-        let mut rng = rand::thread_rng();
+        rand::thread_rng().gen_biguint_below(bound)
+    }
 
-        rng.gen_biguint_below(bound)
+    pub fn generate_random_string(size: usize) -> String {
+        rand::thread_rng()
+            .sample_iter(rand::distributions::Alphanumeric)
+            .take(size)
+            .map(char::from)
+            .collect()
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use num_traits::Num;
 
     #[test]
     fn test_toy_example() {
